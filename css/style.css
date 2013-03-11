@@ -25,3 +25,17 @@ html {
   padding-left: 18px;
   background: url("../img/right-arrow.png") left 5px no-repeat;
 }
+
+.row-fluid {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.subtitle {
+  opacity: .7;
+  padding-bottom: 20px;
+}
+
+.subtitle span {
+  padding-right: 10%;
+}

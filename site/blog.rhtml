@@ -1,14 +1,14 @@
 <%= header(config, "", :blog) %>
 
-<% for post in blog.posts[0..2] do %>
+<% for post in blog.posts[0..4] do %>
 <%= post_content(config, "", post, true, false) %>
 <% end %>
 <div class="row-fluid">
   <div class="span9">
-    <a href="archive.html"><i class="icon-folder-open"></i> Archive</a>
+    <i class="icon-folder-open"></i> <a href="archive.html">Archive</a>
   </div>
   <div class="span3">
   </div>
 </div>
 
-<%= footer %>
+<%= footer(config) %>

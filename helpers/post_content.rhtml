@@ -1,7 +1,21 @@
+<%
+  author = config["authors"][post.author]
+  raise "Author \"#{post.author}\" unknown. Look at \"config.yaml\" to see the possible authors." unless author %>
 <div class="row-fluid">
   <div class="span9">
     <h1><a href="<%= dir + post.url %>"><%= h post.name %></a></h1>
-    <h2><%= date post.date %></h2>
+    <hr />
+    <div class="subtitle">
+      <span><i class="icon-time"></i> <%= date post.date %></span>
+      <span><i class="icon-user"></i>
+      <% if author["website"] %>
+        <a href="<%= author["website"] %>"><%= h author["name"] %></a>
+      <% else %>
+        <%= h author["name"] %>
+      <% end %>
+      </span>
+      <span><i class="icon-comment"></i> <a href="<%= dir + post.url + "#disqus_thread" %>">Comments</a></span>
+    </div>
     <% if preview %>
     <div class="preview">
       <%= post.content %>
@@ -27,9 +41,6 @@
     <% end %>
   </div>
   <div class="span3 well hidden-phone">
-    <%
-      author = config["authors"][post.author]
-      raise "Author \"#{post.author}\" unknown. Look at \"config.yaml\" to see the possible authors." unless author %>
     <h3><%= h author["name"] %></h3>
     <p>
       <dl>
@@ -37,7 +48,7 @@
           <dt>Position</dt><dd><%= h author["position"] %></dd>
         <% end %>
         <% if author["website"] %>
-          <dt>Website</dt><dd><a href="<%= author["website"] %>"><i class="icon-globe"></i> <%= author["website"] %></a></dd>
+          <dt>Website</dt><dd><i class="icon-globe"></i> <a href="<%= author["website"] %>"><%= author["website"] %></a></dd>
         <% end %>
         <% if author["email"] %>
           <% name, domain = author["email"].split("@") %>
