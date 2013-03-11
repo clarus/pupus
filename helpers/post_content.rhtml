@@ -1,0 +1,42 @@
+<div class="row-fluid">
+  <div class="span9">
+    <h1><a href="<%= dir + post.url %>"><%= h post.name %></a></h1>
+    <h2><%= date post.date %></h2>
+    <% if preview %>
+    <div class="preview">
+      <%= post.content %>
+    </div>
+    <a href="<%= dir + post.url %>">Read more</a>
+    <% else %>
+      <%= post.content %>
+    <% end %>
+    
+    <% if comments %>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_shortname = '<%= u config["disqus"] %>';
+      
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript><p>Enable JavaScript to view the comments.</p></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+    <% end %>
+  </div>
+  <div class="span3 well hidden-phone">
+    <%
+      author = config["authors"][post.author]
+      raise "Author \"#{post.author}\" unknown. Look at \"config.yaml\" to see the possible authors." unless author %>
+    <h3><%= h author["name"] %></h3>
+    <p>
+      <dl>
+        <dt>Position</dt><dd><%= h author["position"] %></dd>
+        <dt>Website</dt><dd><a href="<%= author["website"] %>"><%= author["website"] %></a></dd>
+        <dt>Twitter</dt><dd><a href="https://twitter.com/<%= author["twitter"] %>">@<%= author["twitter"] %></a></dd>
+      </dl>
+    </p>
+  </div>
+</div>

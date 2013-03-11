@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title><%= h config["title"] %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Pir2 team.">
+    <link rel="alternate" type="application/rss+xml" href="<%= dir %>rss.xml" />
+    <link href="<%= dir %>css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="<%= dir %>css/style.css" rel="stylesheet" media="screen">
+    <link href="<%= dir %>css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="<%= dir %>js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="<%= dir %>."><%= h config["title"] %></a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <% links = [
+                  [:home, "Home", "."],
+                  [:blog, "Blog", "blog.html"]
+                ]
+                links.each do |id, name, url|
+              %>
+              <li<%= " class=\"active\" " if active_link == id %>><a href="<%= dir + url %>"><%= h name %></a></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">

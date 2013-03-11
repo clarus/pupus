@@ -1,0 +1,27 @@
+html {
+  overflow-y: scroll;
+}
+
+.navbar-inner {
+  border-radius: 0px;
+}
+
+.container-fluid {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.preview .full-article {
+  display: none;
+}
+
+.nav-list ul {
+  margin-top: 10px;
+  list-style: none;
+}
+
+.nav-list li {
+  line-height: 25px;
+  padding-left: 18px;
+  background: url("../img/right-arrow.png") left 5px no-repeat;
+}

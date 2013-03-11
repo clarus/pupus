@@ -1,0 +1,112 @@
+<p>I am pleased to announce the first official release of <em><strong>PPrint</strong></em>, an OCaml library for pretty-printing textual documents.</p>
+
+<h4 id="a-taste-of-the-layout-language">A taste of the layout language</h4>
+<p>At the heart of <em><strong>PPrint</strong></em> is a little domain-specific language of documents. This language has a well-defined semantics, which the printing engine implements. This language rests upon a small number of fundamental concepts.</p>
+<p>There are combinators for creating atomic documents. For instance,</p>
+<pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="dt">string</span> <span class="st">&quot;hello&quot;</span></code></pre>
+<p>is a simple, unbreakable document.</p>
+<p>There is also a concatenation operator, which joins two documents. For instance,</p>
+<pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="dt">string</span> <span class="st">&quot;hello&quot;</span> ^^ <span class="dt">string</span> <span class="st">&quot;world&quot;</span></code></pre>
+<p>is a composite document. It is in fact equivalent to <code>string &quot;helloworld&quot;</code>.</p>
+<p>So far, nothing very exciting. The next two combinators are more original and interesting.</p>
+<p>The first of these combinators, <code>break 1</code>, is a breakable space. If printed in flat mode, it produces an ordinary space character; if printed in normal mode, it produces a newline character.</p>
+<p>Yes, there are two printing modes, namely flat mode and normal mode. The printing engine goes back and forth between these two modes. Exactly where and how the engine switches from one mode to the other is controlled by the next combinator.</p>
+<p>The second of these combinators, <code>group</code>, introduces a choice between flat mode and normal mode. It is a document transformer: if <code>d</code> is a document, then <code>group d</code> is a document. When the printing engine encounters <code>group d</code>, two possibilities arise. The first possibility is to print all of <code>d</code> on a single line. This is known as flat mode. The engine tries this first (ignoring any <code>group</code> combinators inside <code>d</code>). If it succeeds, great. If it fails, by lack of space on the current line, then the engine backtracks and reverts to the second possibility, which is to simply ignore the <code>group</code> combinator, and just print <code>d</code>. This has subtle consequences: there might be further groups inside <code>d</code>, and each of these groups will give rise to further choices.</p>
+
+<div class="full-article">
+<p>This gives rise to an interesting language, where <code>group</code> is used to indicate a choice point, and the appearance of <code>break</code> is dependent upon the choice point(s) that appear higher up in the hierarchical structure of the document. For instance, the document:</p>
+<pre class="sourceCode ocaml"><code class="sourceCode ocaml">group (<span class="dt">string</span> <span class="st">&quot;This&quot;</span> ^^ break 1 ^^ <span class="dt">string</span> <span class="st">&quot;is&quot;</span> ^^ break 1 ^^ <span class="dt">string</span> <span class="st">&quot;pretty.&quot;</span>)</code></pre>
+<p>will be printed either on a single line, if it fits, or on three lines. It will not be printed on two lines: there is just one choice point, so either the two breakable spaces will be broken, or none of them will. By the way, this document can be abbreviated as follows:</p>
+<pre class="sourceCode ocaml"><code class="sourceCode ocaml">group (<span class="dt">string</span> <span class="st">&quot;This&quot;</span> ^/^ <span class="dt">string</span> <span class="st">&quot;is&quot;</span> ^/^ <span class="dt">string</span> <span class="st">&quot;pretty.&quot;</span>)</code></pre>
+<p>On the other hand, the document:</p>
+<pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="dt">string</span> <span class="st">&quot;This&quot;</span> ^^
+group (break 1 ^^ <span class="dt">string</span> <span class="st">&quot;is&quot;</span>) ^^
+group (break 1 ^^ <span class="dt">string</span> <span class="st">&quot;pretty.&quot;</span>)</code></pre>
+<p>could be printed on one, two, or three lines. There are two choice points, each of which influences one of the two breakable spaces. The two choices are independent of one another. Each of the words in the sentence <code>This is pretty.</code> will be printed on the current line if it fits, and on a new line otherwise. By the way, this document can be abbreviated as follows:</p>
+<pre class="sourceCode ocaml"><code class="sourceCode ocaml">flow 1 [
+  <span class="dt">string</span> <span class="st">&quot;This&quot;</span> ;
+  <span class="dt">string</span> <span class="st">&quot;is&quot;</span> ;
+  <span class="dt">string</span> <span class="st">&quot;pretty.&quot;</span>
+]</code></pre>
+<p>There are more combinators, such as <code>nest</code>, which controls indentation, and it is relatively easy to roll your own combinators on top of those that are provided.</p>
+<p>One limitation of the library is that the document must be entirely built in memory before it is printed. So far, we have used the library in small- to medium-scale applications, and this has not been a problem. In principle, one could work around this limitation by adding a new document constructor whose argument is a suspended document computation.</p>
+<h4 id="acknowledgements">Acknowledgements</h4>
+<p>The document language and the printing engine are inspired by Daan Leijen's <a href="http://www.cs.uu.nl/~daan/pprint.html">PPrint</a> library, which itself is based on the ideas developed by Philip Wadler in the paper <a href="http://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf">A Prettier Printer</a>.</p>
+<p><em><strong>PPrint</strong></em> was written by François Pottier and Nicolas Pouillard, with contributions by Yann Régis-Gianas, Gabriel Scherer, and Jonathan Protzenko.</p>
+<h4 id="installation">Installation</h4>
+<p>The library is available online (<a href="http://gallium.inria.fr/~fpottier/pprint/pprint.tar.gz">source code</a>, <a href="http://gallium.inria.fr/~fpottier/pprint/doc/">documentation</a>), and can also be installed via OPAM: just type <code>opam install pprint</code> if you already have a working OPAM installation.</p>
+<p>Have fun! Feel free to make comments, suggestions, and to let me know if and how you are using this library.</p>
+<h4 id="a-final-example">A Final Example</h4>
+<p>For a larger example, here is the code of the file <code>PPrintTest.ml</code> included in the distribution (with the maximum line width adapted for this blog post):</p>
+<pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="ot">open</span> PPrint
+
+<span class="kw">let</span> document =
+  prefix 2 1
+    (<span class="dt">string</span> <span class="st">&quot;TITLE:&quot;</span>)
+    (<span class="dt">string</span> <span class="st">&quot;PPrint&quot;</span>)
+  ^^
+  hardline
+  ^^
+  prefix 2 1
+    (<span class="dt">string</span> <span class="st">&quot;AUTHORS:&quot;</span>)
+    (utf8string <span class="st">&quot;François Pottier and Nicolas Pouillard&quot;</span>)
+  ^^
+  hardline
+  ^^
+  prefix 2 1
+    (<span class="dt">string</span> <span class="st">&quot;ABSTRACT:&quot;</span>)
+    (
+      flow 1 (words
+        <span class="st">&quot;This is an adaptation of Daan Leijen's </span><span class="ch">\&quot;</span><span class="st">PPrint</span><span class="ch">\&quot;</span>
+<span class="st">        library, which itself is based on the ideas developed</span>
+<span class="st">        by Philip Wadler in </span><span class="ch">\&quot;</span><span class="st">A Prettier Printer</span><span class="ch">\&quot;</span><span class="st">. For more</span>
+<span class="st">        information about Wadler's and Leijen's work,</span>
+<span class="st">        please consult the following references:&quot;</span>)
+      ^^
+      nest 2 (
+        twice (break 1)
+        ^^
+        separate_map (break 1) (<span class="kw">fun</span> s -&gt; nest 2 (url s)) [
+          <span class="st">&quot;http://www.cs.uu.nl/~daan/pprint.html&quot;</span>;
+          <span class="st">&quot;http://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf&quot;</span>;
+        ]
+      )
+      ^^
+      twice (break 1)
+      ^^
+      flow 1 (words
+        <span class="st">&quot;To install PPrint, type </span><span class="ch">\&quot;</span><span class="st">make -C src install</span><span class="ch">\&quot;</span><span class="st">.</span>
+<span class="st">         ocamlfind is required.&quot;</span>)
+      ^^
+      twice (break 1)
+      ^^
+      flow 1 (words
+        <span class="st">&quot;The documentation for PPrint is built by </span><span class="ch">\&quot;</span><span class="st">make doc</span><span class="ch">\&quot;</span>
+<span class="st">         and is found in the file doc/index.html.&quot;</span>)
+    )
+  ^^
+  hardline
+
+<span class="kw">let</span> () =
+  ToChannel<span class="kw">.</span>pretty 1. 60 stdout document;
+  flush stdout</code></pre>
+<p>It produces the following output:</p>
+<pre><code>TITLE: PPrint
+AUTHORS: François Pottier and Nicolas Pouillard
+ABSTRACT:
+  This is an adaptation of Daan Leijen's &quot;PPrint&quot; library,
+  which itself is based on the ideas developed by Philip
+  Wadler in &quot;A Prettier Printer&quot;. For more information about
+  Wadler's and Leijen's work, please consult the following
+  references:
+    
+    http://www.cs.uu.nl/~daan/pprint.html
+    http://homepages.inf.ed.ac.uk/wadler/papers/prettier/
+      prettier.pdf
+  
+  To install PPrint, type &quot;make -C src install&quot;. ocamlfind
+  is required.
+  
+  The documentation for PPrint is built by &quot;make doc&quot; and is
+  found in the file doc/index.html.</code></pre>
+</div>

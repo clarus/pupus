@@ -1,0 +1,69 @@
+<p>A quick and dirty blog post about the <code>-documentation</code> option of <code>ocamlbuild</code>, how to use and understand its output.</p>
+
+<p>I've been overloaded since returning from POPL, and all the nice and interesting blog posts I planned to polish and publish are still in the drawers. In the meantime, I'm recycling emails that may be of interest to some of our beloved readers.</p>
+<p>This post comes from a conversation with Cedric Cellier, which was wondering how to tell ocamlbuild to use the <code>-custom</code> option to (bytecode) compile his OCaml program.</p>
+
+<h4 id="the-ocamlbuild--documentation-option">The ocamlbuild <code>-documentation</code> option</h4>
+<p>The command <code>ocamlbuild ... -documentation</code> explains the set of rules and tags understood by this particular ocamlbuild invocation (which can depend on the plugin, other options passed to <code>ocamlbuild</code>, etc..). It returns a very long output, that contains information about both all <em>rules</em> known by ocamlbuild (which tells him how to dynamically look for the dependencies of a given target) and all <em>tags</em> (which add flags to the compilation command for a given target). Some representative examples on my system:</p>
+<pre><code>...
+
+rule
+  &quot;ocaml: cmx* &amp; o* -&gt; native&quot;
+  ~deps:[ %.cmx; %.o ]
+  ~prods:[ %.native ]
+  &lt;fun&gt;
+
+rule
+  &quot;ocaml: mllib &amp; d.cmo* -&gt; d.cma&quot;
+  ~deps:[ %.mllib ]
+  ~prods:[ %.d.cma ]
+  &lt;fun&gt;
+
+...
+
+flag {. byte, debug, link, ocaml, program .} &quot;-g&quot;
+
+flag {. byte, compile, debug, ocaml .} &quot;-g&quot;
+
+flag {. link, native, ocaml, use_camlp4_bin .} &quot;+camlp4/Camlp4Bin.cmx&quot;
+
+flag {. byte, link, ocaml, use_camlp4_bin .} &quot;+camlp4/Camlp4Bin.cmo&quot;
+
+flag {. compile, ocaml, use_camlp4_full .}
+  &quot;-I +camlp4/Camlp4Parsers -I +camlp4/Camlp4Printers -I +camlp4/Camlp4Filters&quot;</code></pre>
+<p>While it won't tell you everything (you don't know which <code>&lt;fun&gt;</code> is hiding under the <code>.d.cma</code> rule above, so you'll need to look at the manual or try it to what this extension means), grepping this output is a good way to find about ocamlbuild tags you didn't know about, and look for specific features. So for our <code>-custom</code> question:</p>
+<pre><code>$ ocamlbuild -documentation | grep custom
+flag {. byte, custom, library, link, ocaml .} &quot;-custom&quot;
+flag {. byte, custom, link, ocaml, program .} &quot;-custom&quot;</code></pre>
+<div class="full-article">
+<p>This tells us that <code>-custom</code> will be added to the compilation command when either one of this list of flags is present for the target being compiled -- this is similar to the predicate system of <code>ocamlfind</code>.</p>
+<h4 id="knowing-which-flags-are-present-thats-what-_build_log-is-for">Knowing which flags are present: that's what <code>_build/_log</code> is for</h4>
+<p>In this simple case it's enough to just try to add the <code>custom</code> tag to your ocamlbuild invocation (either in the <code>_tags</code> or on the command line directly) and check that it works. But in general you may want to know about precisely which of those flags are already present under your current compilation settings, and which should be added. For that, the log is your friend.</p>
+<pre><code>$ cd /tmp
+$ mkdir ocamlbuild-test; cd ocamlbuild-test
+$ touch test.ml
+$ ocamlbuild test.byte
+Finished, 3 targets (0 cached) in 00:00:00.
+$ cat _build/_log 
+### Starting build.
+# Target: test.ml.depends, tags: { extension:ml, file:test.ml, ocaml, ocamldep, quiet }
+.../bin/ocamldep.opt -modules test.ml &gt; test.ml.depends
+# Target: test.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:test.cmo, file:test.ml, implem, ocaml, quiet }
+.../bin/ocamlc.opt -c -o test.cmo test.ml
+# Target: test.byte, tags: { byte, dont_link_with, extension:byte, file:test.byte, link, ocaml, program, quiet }
+.../bin/ocamlc.opt test.cmo -o test.byte
+# Compilation successful.</code></pre>
+<p>There you are: ocamlbuild called <code>ocamldep</code> to look for dependencies, then compiled the module, then linked it. And you have the list of all flag presents at each step in the process. You can check that besides <code>custom</code>, the necessary <code>byte, link, ocaml, program</code> are all present during the linking phase.</p>
+<pre><code>$ ocamlbuild -tag custom test.byte
+Finished, 3 targets (2 cached) in 00:00:00.
+scherer@jurancon:/tmp/ocamlbuild-test $ cat _build/_log 
+### Starting build.
+# Target: test.ml.depends, tags: { custom, extension:ml, file:test.ml, ocaml, ocamldep, quiet }
+.../bin/ocamldep.opt -modules test.ml &gt; test.ml.depends # cached
+# Target: test.cmo, tags: { byte, compile, custom, extension:cmo, extension:ml, file:test.cmo, file:test.ml, implem, ocaml, quiet }
+.../bin/ocamlc.opt -c -o test.cmo test.ml # cached
+# Target: test.byte, tags: { byte, custom, dont_link_with, extension:byte, file:test.byte, link, ocaml, program, quiet }
+.../bin/ocamlc.opt -custom test.cmo -o test.byte
+# Compilation successful.</code></pre>
+<p>The <code>custom</code> tag was added to all compilation phases (we may have been more precise by adding it in <code>_tags</code> as a tag on <code>test.byte</code> only, so that it gets added only during the linking step), and resulted to the addition of the <code>-custom</code> flag. Job done. Notice that ocamlbuild only runs the linking command again, as the output of the others are already cached.</p>
+</div>

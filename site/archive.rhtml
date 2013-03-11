@@ -1,0 +1,14 @@
+<%= header(config, "", :blog) %>
+
+<div class="row-fluid">
+  <div class="span12">
+    <h1>Posts</h1>
+    <ul>
+    <% blog.posts.each do |post| %>
+      <li><a href="<%= post.url %>"><%= h post.name %></a> <%= date post.date %></li>
+    <% end %>
+    </ul>
+  </div>
+</div>
+
+<%= footer %>
