@@ -6,7 +6,7 @@
     <div class="preview">
       <%= post.content %>
     </div>
-    <a href="<%= dir + post.url %>">Read more</a>
+    <a href="<%= dir + post.url %>"><i class="icon-arrow-right"></i> Read more</a>
     <% else %>
       <%= post.content %>
     <% end %>
@@ -33,9 +33,19 @@
     <h3><%= h author["name"] %></h3>
     <p>
       <dl>
-        <dt>Position</dt><dd><%= h author["position"] %></dd>
-        <dt>Website</dt><dd><a href="<%= author["website"] %>"><%= author["website"] %></a></dd>
-        <dt>Twitter</dt><dd><a href="https://twitter.com/<%= author["twitter"] %>">@<%= author["twitter"] %></a></dd>
+        <% if author["position"] %>
+          <dt>Position</dt><dd><%= h author["position"] %></dd>
+        <% end %>
+        <% if author["website"] %>
+          <dt>Website</dt><dd><a href="<%= author["website"] %>"><i class="icon-globe"></i> <%= author["website"] %></a></dd>
+        <% end %>
+        <% if author["email"] %>
+          <% name, domain = author["email"].split("@") %>
+          <dt>Email</dt><dd><i class="icon-envelope"></i> (λ x. x @ <%= domain %>) <%= name %></dd>
+        <% end %>
+        <% if author["twitter"] %>
+          <dt>Twitter</dt><dd><a href="https://twitter.com/<%= author["twitter"] %>">@<%= author["twitter"] %></a></dd>
+        <% end %>
       </dl>
     </p>
   </div>
