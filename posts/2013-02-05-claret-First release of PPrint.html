@@ -19,15 +19,64 @@
 <p>will be printed either on a single line, if it fits, or on three lines. It will not be printed on two lines: there is just one choice point, so either the two breakable spaces will be broken, or none of them will. By the way, this document can be abbreviated as follows:</p>
 <pre class="sourceCode ocaml"><code class="sourceCode ocaml">group (<span class="dt">string</span> <span class="st">&quot;This&quot;</span> ^/^ <span class="dt">string</span> <span class="st">&quot;is&quot;</span> ^/^ <span class="dt">string</span> <span class="st">&quot;pretty.&quot;</span>)</code></pre>
 <p>On the other hand, the document:</p>
-<pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="dt">string</span> <span class="st">&quot;This&quot;</span> ^^
-group (break 1 ^^ <span class="dt">string</span> <span class="st">&quot;is&quot;</span>) ^^
-group (break 1 ^^ <span class="dt">string</span> <span class="st">&quot;pretty.&quot;</span>)</code></pre>
+<pre class="prettyprint">
+string "This" ^^
+group (break 1 ^^ string "is") ^^
+group (break 1 ^^ string "pretty.")
+</pre>
 <p>could be printed on one, two, or three lines. There are two choice points, each of which influences one of the two breakable spaces. The two choices are independent of one another. Each of the words in the sentence <code>This is pretty.</code> will be printed on the current line if it fits, and on a new line otherwise. By the way, this document can be abbreviated as follows:</p>
-<pre class="sourceCode ocaml"><code class="sourceCode ocaml">flow 1 [
-  <span class="dt">string</span> <span class="st">&quot;This&quot;</span> ;
-  <span class="dt">string</span> <span class="st">&quot;is&quot;</span> ;
-  <span class="dt">string</span> <span class="st">&quot;pretty.&quot;</span>
-]</code></pre>
+<pre class="prettyprint linenums">
+open PPrint
+let document =
+  prefix 2 1
+    (string "TITLE:")
+    (string "PPrint")
+  ^^
+  hardline
+  ^^
+  prefix 2 1
+    (string "AUTHORS:")
+    (utf8string "François Pottier and Nicolas Pouillard")
+  ^^
+  hardline
+  ^^
+  prefix 2 1
+    (string "ABSTRACT:")
+    (
+      flow 1 (words
+        "This is an adaptation of Daan Leijen's \"PPrint\"
+        library, which itself is based on the ideas developed
+        by Philip Wadler in \"A Prettier Printer\". For more
+        information about Wadler's and Leijen's work,
+        please consult the following references:")
+      ^^
+      nest 2 (
+        twice (break 1)
+        ^^
+        separate_map (break 1) (fun s -> nest 2 (url s)) [
+          "http://www.cs.uu.nl/~daan/pprint.html";
+          "http://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf";
+        ]
+      )
+      ^^
+      twice (break 1)
+      ^^
+      flow 1 (words
+        "To install PPrint, type \"make -C src install\".
+         ocamlfind is required.")
+      ^^
+      twice (break 1)
+      ^^
+      flow 1 (words
+        "The documentation for PPrint is built by \"make doc\"
+         and is found in the file doc/index.html.")
+    )
+  ^^
+  hardline
+let () =
+  ToChannel.pretty 1. 60 stdout document;
+  flush stdout
+</pre>
 <p>There are more combinators, such as <code>nest</code>, which controls indentation, and it is relatively easy to roll your own combinators on top of those that are provided.</p>
 <p>One limitation of the library is that the document must be entirely built in memory before it is printed. So far, we have used the library in small- to medium-scale applications, and this has not been a problem. In principle, one could work around this limitation by adding a new document constructor whose argument is a suspended document computation.</p>
 <h4 id="acknowledgements">Acknowledgements</h4>
