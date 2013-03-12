@@ -1,0 +1,23 @@
+<%= header(config, "", :blog) %>
+
+<% for post in blog.posts[config["posts_per_page"] * page .. config["posts_per_page"] * (page + 1) - 1] do %>
+  <%= post_content(config, "", post, true, false) %>
+<% end %>
+
+<div class="row-fluid">
+  <div class="span9">
+    <div class="pagination" id="pagination">
+      <ul>
+        <li <% if page == 0 %>class="disabled"<% end %>><a href="posts1.html#pagination">«</a></li>
+        <% for i in 1 .. blog.nb_pages do %>
+          <li <% if page == i - 1 %>class="active"<% end %>><a href="posts<%= i %>.html#pagination"><%= i %></a></li>
+        <% end %>
+        <li <% if page == blog.nb_pages - 1 %>class="disabled"<% end %>><a href="posts<%= blog.nb_pages %>.html#pagination">»</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="span3">
+  </div>
+</div>
+
+<%= footer(config) %>

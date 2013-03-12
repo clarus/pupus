@@ -39,3 +39,7 @@ html {
 .subtitle span {
   padding-right: 10%;
 }
+
+.pagination {
+  text-align: center;
+}

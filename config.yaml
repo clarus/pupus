@@ -2,6 +2,7 @@ title: Pir2 team
 url: http://www.pps.univ-paris-diderot.fr/pi.r2/
 destination: _site
 disqus: pir2
+posts_per_page: 3
 authors:
   claret:
     name: Guillaume Claret

@@ -5,9 +5,9 @@ include ERB::Util
 
 # Models
 class Blog
-  attr_reader :posts
+  attr_reader :posts, :nb_pages
   
-  def initialize
+  def initialize(config)
     @posts = []
     Dir.foreach("posts") do |file_name|
       if File.extname(file_name) == ".html"
@@ -15,6 +15,8 @@ class Blog
       end
     end
     @posts.sort! {|a, b| - (a.date <=> b.date)}
+    a = @posts.size; b = config["posts_per_page"]
+    @nb_pages = a / b + (a % b == 0 ? 0 : 1)
   end
 end
 
@@ -31,7 +33,7 @@ class Post
       raise "Invalid post name \"#{file_name}\". Should be YEAR-MONTH-DAY-AUTHOR-TITLE.html"
     end
     @content = File.read(file_name)
-    @url = "blog/#{@name.gsub(/\W/, "-").downcase}.html"
+    @url = "blog/#{@name.gsub(/\W+/, "-").downcase}.html"
   end
 end
 
@@ -94,11 +96,18 @@ class PostView < View
   end
 end
 
+class PostsView < View
+  def initialize(blog, config, page)
+    @url = "posts#{page + 1}.html"
+    @html = Template.new("helpers/posts.rhtml").result(binding)
+  end
+end
+
 # Controller
 class Controller
   def initialize(config)
     @config = config
-    @blog = Blog.new
+    @blog = Blog.new(@config)
   end
   
   def make
@@ -110,9 +119,13 @@ class Controller
     page_views = pages.collect {|file_name| PageView.new(@blog, @config, file_name)}
     post_views = @blog.posts.collect {|post| PostView.new(@blog, @config, post)}
     
-    for view in page_views + post_views do
+    posts_views = Array.new(@blog.nb_pages) {|page| PostsView.new(@blog, @config, page)}
+    views = page_views + post_views + posts_views
+    
+    for view in views do
       File.open("#{@config["destination"]}/#{view.url}", "w") {|f| f << view.html}
     end
+    puts "#{views.size} files generated."
   end
 end
 
