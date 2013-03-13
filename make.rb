@@ -59,7 +59,7 @@ module Helpers
     Template.new("helpers/header.rhtml").result(binding)
   end
   
-  def footer(config)
+  def footer(config, dir)
     Template.new("helpers/footer.rhtml").result(binding)
   end
   

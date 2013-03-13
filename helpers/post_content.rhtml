@@ -1,7 +1,7 @@
 <%
   author = config["authors"][post.author]
   raise "Author \"#{post.author}\" unknown. Look at \"config.yaml\" to see the possible authors." unless author %>
-<div class="row-fluid">
+<div class="row-fluid post">
   <div class="span9">
     <h1><a href="<%= dir + post.url %>"><%= h post.name %></a></h1>
     <hr />
@@ -17,12 +17,14 @@
       <span class="hidden-phone"><i class="icon-comment"></i> <a href="<%= dir + post.url + "#disqus_thread" %>">Comments</a></span>
     </div>
     <% if preview %>
-    <div class="preview">
-      <%= post.content %>
-    </div>
-    <a href="<%= dir + post.url %>"><i class="icon-arrow-right"></i> Read more</a>
-    <% else %>
-      <%= post.content %>
+      <div class="preview">
+    <% end %>
+    <!-- Beginning of the post content -->
+    <%= post.content %>
+    <!-- End of the post content -->
+    <% if preview %>
+      </div>
+      <a href="<%= dir + post.url %>"><i class="icon-arrow-right"></i> read more</a>
     <% end %>
     
     <% if comments %>

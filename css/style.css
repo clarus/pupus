@@ -2,6 +2,10 @@ html {
   overflow-y: scroll;
 }
 
+.navbar {
+  margin-bottom: 40px;
+}
+
 .navbar-inner {
   border-radius: 0px;
 }
@@ -26,9 +30,8 @@ html {
   background: url("../img/right-arrow.png") left 5px no-repeat;
 }
 
-.row-fluid {
-  padding-top: 20px;
-  padding-bottom: 20px;
+.post {
+  padding-bottom: 40px;
 }
 
 .subtitle {

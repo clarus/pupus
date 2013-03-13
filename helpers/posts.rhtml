@@ -1,18 +1,29 @@
 <%= header(config, "", :blog) %>
 
+<div class="row-fluid">
+  <div class="span9">
+    <p>
+      This is the blog of the PPS team of Université Paris Diderot.
+      <a href="rss.xml"><img src="img/rss.png" class="pull-right" /></a>
+    </p>
+  </div>
+  <div class="span3">
+  </div>
+</div>
+
 <% for post in blog.posts[config["posts_per_page"] * page .. config["posts_per_page"] * (page + 1) - 1] do %>
   <%= post_content(config, "", post, true, false) %>
 <% end %>
 
 <div class="row-fluid">
   <div class="span9">
-    <div class="pagination" id="pagination">
+    <div class="pagination">
       <ul>
-        <li <% if page == 0 %>class="disabled"<% end %>><a href="posts1.html#pagination">«</a></li>
+        <li <% if page == 0 %>class="disabled"<% end %>><a href="posts1.html">«</a></li>
         <% for i in 1 .. blog.nb_pages do %>
-          <li <% if page == i - 1 %>class="active"<% end %>><a href="posts<%= i %>.html#pagination"><%= i %></a></li>
+          <li <% if page == i - 1 %>class="active"<% end %>><a href="posts<%= i %>.html"><%= i %></a></li>
         <% end %>
-        <li <% if page == blog.nb_pages - 1 %>class="disabled"<% end %>><a href="posts<%= blog.nb_pages %>.html#pagination">»</a></li>
+        <li <% if page == blog.nb_pages - 1 %>class="disabled"<% end %>><a href="posts<%= blog.nb_pages %>.html">»</a></li>
       </ul>
     </div>
   </div>
@@ -20,4 +31,4 @@
   </div>
 </div>
 
-<%= footer(config) %>
+<%= footer(config, "") %>
