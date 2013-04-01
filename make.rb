@@ -3,41 +3,6 @@ require "yaml"
 require "erb"
 include ERB::Util
 
-# Models
-class Blog
-  attr_reader :posts, :nb_pages
-  
-  def initialize(config)
-    @posts = []
-    Dir.foreach("posts") do |file_name|
-      if File.extname(file_name) == ".html"
-        @posts << Post.new(File.basename(file_name, ".html"))
-      end
-    end
-    @posts.sort! {|a, b| - (a.date <=> b.date)}
-    a = @posts.size; b = config["posts_per_page"]
-    @nb_pages = a / b + (a % b == 0 ? 0 : 1)
-  end
-end
-
-class Post
-  attr_reader :name, :author, :date, :content, :url
-  
-  def initialize(name)
-    file_name = "posts/#{name}.html"
-    if /\A(\d+)-(\d+)-(\d+)-(\w+)-(.*)\z/ === name
-      @date = Time.local($1, $2, $3)
-      @author = $4
-      @name = $5
-    else
-      raise "Invalid post name \"#{file_name}\". Should be YEAR-MONTH-DAY-AUTHOR-TITLE.html"
-    end
-    @content = File.read(file_name)
-    @url = "blog/#{@name.gsub(/\W+/, "-").downcase}.html"
-  end
-end
-
-# Views
 class Template
   def initialize(file_name)
     @file_name = file_name
@@ -54,6 +19,44 @@ class Template
   end
 end
 
+# Models
+class Blog
+  attr_reader :posts, :nb_pages
+  
+  def initialize(config)
+    @posts = []
+    Dir.foreach("posts") do |file_name|
+      if File.extname(file_name) == ".rhtml"
+        @posts << Post.new(File.basename(file_name, ".rhtml"))
+      end
+    end
+    @posts.sort! {|a, b| - (a.date <=> b.date)}
+    a = @posts.size; b = config["posts_per_page"]
+    @nb_pages = a / b + (a % b == 0 ? 0 : 1)
+  end
+end
+
+class Post
+  attr_reader :name, :author, :date, :content, :content_preview, :url
+  
+  def initialize(name)
+    file_name = "posts/#{name}.rhtml"
+    if /\A(\d+)-(\d+)-(\d+)-(\w+)-(.*)\z/ === name
+      @date = Time.local($1, $2, $3)
+      @author = $4
+      @name = $5
+    else
+      raise "Invalid post name \"#{file_name}\". Should be YEAR-MONTH-DAY-AUTHOR-TITLE.rhtml"
+    end
+    preview = false
+    @content = Template.new(file_name).result(binding)
+    preview = true
+    @content_preview = Template.new(file_name).result(binding)
+    @url = "blog/#{@name.gsub(/\W+/, "-").downcase}.html"
+  end
+end
+
+# Views
 module Helpers
   def header(config, dir, active_link)
     Template.new("helpers/header.rhtml").result(binding)

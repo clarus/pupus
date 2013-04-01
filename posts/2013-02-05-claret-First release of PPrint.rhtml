@@ -15,7 +15,7 @@
 <p>Yes, there are two printing modes, namely flat mode and normal mode. The printing engine goes back and forth between these two modes. Exactly where and how the engine switches from one mode to the other is controlled by the next combinator.</p>
 <p>The second of these combinators, <code>group</code>, introduces a choice between flat mode and normal mode. It is a document transformer: if <code>d</code> is a document, then <code>group d</code> is a document. When the printing engine encounters <code>group d</code>, two possibilities arise. The first possibility is to print all of <code>d</code> on a single line. This is known as flat mode. The engine tries this first (ignoring any <code>group</code> combinators inside <code>d</code>). If it succeeds, great. If it fails, by lack of space on the current line, then the engine backtracks and reverts to the second possibility, which is to simply ignore the <code>group</code> combinator, and just print <code>d</code>. This has subtle consequences: there might be further groups inside <code>d</code>, and each of these groups will give rise to further choices.</p>
 
-<div class="full-article">
+<% unless preview %>
 <p>This gives rise to an interesting language, where <code>group</code> is used to indicate a choice point, and the appearance of <code>break</code> is dependent upon the choice point(s) that appear higher up in the hierarchical structure of the document. For instance, the document:</p>
 <pre class="prettyprint">group (string "This" ^^ break 1 ^^ string "is" ^^ break 1 ^^ string "pretty.")</pre>
 <p>will be printed either on a single line, if it fits, or on three lines. It will not be printed on two lines: there is just one choice point, so either the two breakable spaces will be broken, or none of them will. By the way, this document can be abbreviated as follows:</p>
@@ -112,4 +112,4 @@ ABSTRACT:
   is required.
   The documentation for PPrint is built by "make doc" and is
   found in the file doc/index.html.</pre>
-</div>
+<% end %>
