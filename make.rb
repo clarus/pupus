@@ -63,16 +63,8 @@ module Helpers
     Template.new("helpers/footer.rhtml").result(binding)
   end
   
-  def date(time)
-    Template.new("helpers/date.rhtml").result(binding)
-  end
-  
   def post_content(config, dir, post, preview, comments)
     Template.new("helpers/post_content.rhtml").result(binding)
-  end
-  
-  def quick_links
-  Template.new("helpers/quick_links.rhtml").result(binding)
   end
 end
 
