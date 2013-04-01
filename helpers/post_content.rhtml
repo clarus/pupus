@@ -2,7 +2,7 @@
   author = config["authors"][post.author]
   raise "Author \"#{post.author}\" unknown. Look at \"config.yaml\" to see the possible authors." unless author %>
 <div class="row-fluid post">
-  <div class="span9">
+  <div class="span8">
     <h1><a href="<%= dir + post.url %>"><%= h post.name %></a></h1>
     <hr />
     <div class="subtitle">
@@ -42,7 +42,10 @@
     <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
     <% end %>
   </div>
-  <div class="span3 well hidden-phone">
+  <div class="span4 well hidden-phone">
+    <% if author["picture"] %>
+      <img src="<%= author["picture"] %>" alt="<%= h author["name"] %>" class="img-polaroid pull-right" width=80px />
+    <% end %>
     <h3><%= h author["name"] %></h3>
     <p>
       <dl>
