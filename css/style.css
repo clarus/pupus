@@ -11,8 +11,12 @@ html {
 }
 
 .container-fluid {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
+}
+
+.content {
+  margin-bottom: 60px;
 }
 
 .preview .full-article {
@@ -32,7 +36,7 @@ html {
 
 .post {
   padding-top: 20px;
-  padding-bottom: 20px;
+  padding-bottom: 40px;
 }
 
 .subtitle {
