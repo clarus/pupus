@@ -25,12 +25,12 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
               <% links = [
-                  [:home, "Home", "."],
-                  [:blog, "Blog", "posts1.html"]
+                  [:blog, "Blog", "."],
+                  [:contribute, "Contribute", "contribute.html"]
                 ]
                 links.each do |id, name, url|
               %>
-              <li<%= " class=\"active\" " if active_link == id %>><a href="<%= dir + url %>"><%= h name %></a></li>
+                <li<%= " class=\"active\" " if active_link == id %>><a href="<%= dir + url %>"><%= h name %></a></li>
               <% end %>
             </ul>
           </div>

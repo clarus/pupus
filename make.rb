@@ -90,8 +90,12 @@ end
 
 class PostsView < View
   def initialize(blog, config, page)
-    @url = "posts#{page + 1}.html"
+    @url = link_to_page(page)
     @html = Template.new("helpers/posts.rhtml").result(binding)
+  end
+  
+  def link_to_page(page)
+    "index#{page == 0 ? "" : page + 1}.html"
   end
 end
 

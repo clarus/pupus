@@ -18,11 +18,11 @@
   <div class="span9">
     <div class="pagination">
       <ul>
-        <li <% if page == 0 %>class="disabled"<% end %>><a href="posts1.html">«</a></li>
-        <% for i in 1 .. blog.nb_pages do %>
-          <li <% if page == i - 1 %>class="active"<% end %>><a href="posts<%= i %>.html"><%= i %></a></li>
+        <li <% if page == 0 %>class="disabled"<% end %>><a href="<%= link_to_page(0) %>">«</a></li>
+        <% for i in 0 .. blog.nb_pages - 1 do %>
+          <li <% if page == i %>class="active"<% end %>><a href="<%= link_to_page(i) %>"><%= i + 1 %></a></li>
         <% end %>
-        <li <% if page == blog.nb_pages - 1 %>class="disabled"<% end %>><a href="posts<%= blog.nb_pages %>.html">»</a></li>
+        <li <% if page == blog.nb_pages - 1 %>class="disabled"<% end %>><a href="<%= link_to_page(blog.nb_pages - 1) %>">»</a></li>
       </ul>
     </div>
   </div>
