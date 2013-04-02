@@ -3,7 +3,13 @@
   raise "Author \"#{post.author}\" unknown. Look at \"config.yaml\" to see the possible authors." unless author %>
 <div class="row-fluid post">
   <div class="span8">
-    <h1><a href="<%= dir + post.url %>"><%= h post.name %></a></h1>
+    <h1>
+      <% if preview %>
+        <a href="<%= dir + post.url %>"><%= h post.name %></a>
+      <% else %>
+        <%= h post.name %>
+      <% end %>
+    </h1>
     <hr />
     <div class="subtitle">
       <span><i class="icon-time"></i> <%= post.date.strftime("%Y-%m-%d") %></span>
