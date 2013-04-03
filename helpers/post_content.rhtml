@@ -49,22 +49,20 @@
       <img src="<%= author["picture"] %>" alt="<%= h author["name"] %>" class="img-polaroid pull-right" width=80 />
     <% end %>
     <h4><%= h author["name"] %></h4>
-    <p>
-      <dl>
-        <% if author["position"] %>
-          <dt>Position</dt><dd><%= h author["position"] %></dd>
-        <% end %>
-        <% if author["website"] %>
-          <dt>Website</dt><dd><i class="icon-globe"></i> <a href="<%= author["website"] %>"><%= author["website"] %></a></dd>
-        <% end %>
-        <% if author["email"] %>
-          <% name, domain = author["email"].split("@") %>
-          <dt>Email</dt><dd><i class="icon-envelope"></i> (λ x. x @ <%= domain %>) <%= name %></dd>
-        <% end %>
-        <% if author["twitter"] %>
-          <dt>Twitter</dt><dd><a href="https://twitter.com/<%= author["twitter"] %>">@<%= author["twitter"] %></a></dd>
-        <% end %>
-      </dl>
-    </p>
+    <dl>
+      <% if author["position"] %>
+        <dt>Position</dt><dd><%= h author["position"] %></dd>
+      <% end %>
+      <% if author["website"] %>
+        <dt>Website</dt><dd><i class="icon-globe"></i> <a href="<%= author["website"] %>"><%= author["website"] %></a></dd>
+      <% end %>
+      <% if author["email"] %>
+        <% name, domain = author["email"].split("@") %>
+        <dt>Email</dt><dd><i class="icon-envelope"></i> (λ x. x @ <%= domain %>) <%= name %></dd>
+      <% end %>
+      <% if author["twitter"] %>
+        <dt>Twitter</dt><dd><a href="https://twitter.com/<%= author["twitter"] %>">@<%= author["twitter"] %></a></dd>
+      <% end %>
+    </dl>
   </div>
 </div>

@@ -1,0 +1,50 @@
+<p><a href="http://coqbottom.gforge.inria.fr/">Coqbottom</a> is a plugin for <a href="http://coq.inria.fr/">Coq</a> to write simple, safe and efficient decision procedures in pure Coq. The main idea is to add a powerful monad to Coq. So side effects, non-termination and exceptions are possible. Plus execution is made efficient by compilation to <a href="http://caml.inria.fr/">OCaml</a>. The results are then post-checked in Coq thanks to our theory of <em>simulable monads</em>.</p>
+<p>You can download Coqbottom on the <a href="http://coqbottom.gforge.inria.fr/">official website</a>, and start looking at the <a href="http://coqbottom.gforge.inria.fr/get_started.html">Get started</a> and <a href="http://coqbottom.gforge.inria.fr/examples.html">Examples</a> sections. We are developing it with the help of <a href="http://www.pps.univ-paris-diderot.fr/~yrg/">Yann Régis-Gianas</a>, <a href="http://www.pps.univ-paris-diderot.fr/~lgonzale/">Lourdes del Carmen González Huesca</a>, <a href="http://www.mpi-sws.org/~beta/">Beta Ziliani</a> and <a href="http://guillaume.claret.me/">Guillaume Claret</a>.</p>
+
+<h3>Proof by reflection and example</h3>
+<p>We will take the example of equivalence decision between two terms given a list of known equivalences. Let us take a type \(T\) with \(\sim\) an equivalence relation and a list of hypothesis:</p>
+<p>\[
+  \begin{array}{rrcl}
+    H_1 :& e_{i_1} &\sim& e_{j_1}\\
+    &&\vdots&\\
+    H_n :& e_{i_n} &\sim& e_{j_n}\\
+  \end{array}
+\]</p>
+<p>Our goal is to prove that \(e_i \sim e_j\) using the reflexivity, symmetry and transitivity properties. On small instances we can obviously solve it by hand, or write a tactic to do it for us. We just need to apply the equivalence properties as many times as necessary. But on a bigger sample:</p>
+<p>\[
+  \begin{array}{rrcl}
+    H_{1,2} :& e_1 &\sim& e_2\\
+    &&\vdots&\\
+    H_{999,1000} :& e_{999} &\sim& e_{1000}\\
+  \end{array}
+\]</p>
+<p>a proof of \(e_1 \sim e_{1000}\) would consist of 998 applications of the transitivity rule. This is just huge. The solution of the proof by reflection technique is to replace a proof term by a <em>computation</em>. This computation has to be done by a proven correct decision procedure.</p>
+<p>The <a href="http://en.wikipedia.org/wiki/Disjoint-set_data_structure">union-find</a> algorithm is an efficient way to solve the equivalence problem. Let us note <code>hs</code> the list of hypothesis indexes <code>[(i_1, j_1), ..., (i_n, j_n)]</code> and <code>(i, j)</code> the indexes of our goal \(e_i \sim e_j\). Then a decision procedure in pseudo-code would look like:</p>
+<pre class="prettyprint linenums">decide (hs, (i, j)) : bool :=
+  let a = ref [] in
+  map (fun (i, j) -> union a i j) hs;
+  let i2 = find a i in
+  let j2 = find a j in
+  i2 = j2</pre>
+<p>We start with an empty array <code>a</code> representing the fact that equivalence classes are <em>a priori</em> singleton sets. We merge them calling the <code>union</code> procedure on each hypothesis. Then if the representatives <code>(i2, j2)</code> of <code>(i, j)</code> are equal the property \(e_i \sim e_j\) holds.</p>
+<p>A nice way to show the soundness of <code>decide</code> is to add an invariant to the array <code>a</code> stating that if <code>i</code> and <code>j</code> are linked then \(e_i \sim e_j\). This can be done elegantly in Coq, which natively supports mixed proofs and programs (see the <a href="http://coq.inria.fr/refman/Reference-Manual028.html">Program</a> construct). An harder thing is to encode the union-find in a purely functional way since it critically relies on a mutable array, and to show the termination of the <code>union</code> and <code>find</code> procedures.</p>
+<p>We decided not to do so, and instead introduce a monad \(M\) representing side-effects, non-termination and exceptions. This is very much in the style of the IO monad of <a href="http://www.haskell.org/">Haskell</a>. It provides several primitives:</p>
+<dl>
+  <dt>Memory</dt>
+  <dd>ref : \(\forall i, T_i \rightarrow M\ (\mathsf{Ref.t}\ T_i)\) (memory allocation)</dd>
+  <dd>read : \(\mathsf{Ref.t}\ T \rightarrow M\ T\)</dd>
+  <dd>write : \(\mathsf{Ref.t}\ T \rightarrow T \rightarrow M\ ()\)</dd>
+  <dt>Non-termination</dt>
+  <dd>fix : \(((A \rightarrow B) \rightarrow A \rightarrow B) \rightarrow A \rightarrow B\)</dd>
+  <dd>dependent_fix : \(((\forall x : A,\ B) \rightarrow \forall x : A,\ B) \rightarrow \forall x : A,\ B\)</dd>
+  <dt>Exceptions</dt>
+  <dd>raise : \(\mathsf{string} \rightarrow M\ T\)</dd>
+  <dd>try_with : \((() \rightarrow M\ T) \rightarrow (\mathsf{string} \rightarrow M\ T) \rightarrow M\ T\)</dd>
+  <dt>Printing</dt>
+  <dd>print : \(T \rightarrow M\ ()\)</dd>
+</dl>
+<p>Obviously, this monad cannot be run natively in Coq. There is no function of type \(M\ \alpha \rightarrow \alpha\) or \(M\ \alpha \rightarrow \mathsf{option}\ \alpha\). This is due to the general fixpoint operators. Plus we would like to run it as efficiently as a native OCaml program.</p>
+
+<h3>Theory of simulable monads</h3>
+<p></p>
+<!-- TODO Talk about select -->
