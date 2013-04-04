@@ -64,7 +64,7 @@ Defined.</pre>
 
 <h3>An hybrid back-end</h3>
 <p>To run our monad we combine the Coq and OCaml back-ends:</p>
-<img src="../data/claret/coqbottom/compilation.svg" class="img-polaroid" width=100% />
+<object type="image/svg+xml" data="../data/claret/coqbottom/compilation.svg" class="img-polaroid" width=100%></object >
 <p class="text-center">Compilation chain.</p>
 <p>We first use the <a href="http://coq.inria.fr/refman/Reference-Manual027.html">extraction</a> mechanism of Coq to get an equivalent program of our decision procedure in OCaml. All the monadic operators are replaced by native OCaml operators, since this language supports all the effects of our monad. We run it on a specific problem instance \(x\). It may not return a result in case of uncaught exception or infinite loop. If the execution is successful, we extract what we call a <em>prophecy</em>. This value is a guide which helps Coq to evaluate the monad efficiently with an extended run function of type:</p>
 <p>\[
@@ -75,7 +75,7 @@ Defined.</pre>
 
 <h3>An hybrid programming model</h3>
 <p>We pretend that our programming model combines nicely safety and efficiency. Safety because of the strong type system of Coq and the ability to prove invariants on our programs. Efficiency because costly computations are delayed to OCaml. It supersedes what can be done with proof by reflection in pure Coq or with an OCaml plugin generating proof certificates. In a way, <a href="http://coqbottom.gforge.inria.fr/">Coqbottom</a> unifies these two techniques, and allow to combine both approach depending on the problem.</p>
-<img src="../data/claret/coqbottom/comparison.svg" class="img-polaroid" width=100% />
+<object type="image/svg+xml" data="../data/claret/coqbottom/comparison.svg" class="img-polaroid" width=100%></object >
 <p class="text-center">Trade-off efficiency vs correctness.</p>
 
 <p>As future work we plan to add more monadic operators, especially for concurrency. It would also be great to have a trusted extraction mechanism for Coq.</p>
