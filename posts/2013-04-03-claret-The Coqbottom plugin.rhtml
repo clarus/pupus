@@ -1,6 +1,7 @@
 <p><a href="http://coqbottom.gforge.inria.fr/">Coqbottom</a> is a plugin for <a href="http://coq.inria.fr/">Coq</a> to write simple, safe and efficient decision procedures in pure Coq. The main idea is to add a powerful monad to Coq. So side effects, non-termination and exceptions are possible. Plus execution is made efficient by compilation to <a href="http://caml.inria.fr/">OCaml</a>. The results are then post-checked in Coq thanks to our theory of <em>simulable monads</em>.</p>
 <p>You can download Coqbottom on the <a href="http://coqbottom.gforge.inria.fr/">official website</a>, and start looking at the <a href="http://coqbottom.gforge.inria.fr/get_started.html">Get started</a> and <a href="http://coqbottom.gforge.inria.fr/examples.html">Examples</a> sections. We are developing it with the help of <a href="http://www.pps.univ-paris-diderot.fr/~yrg/">Yann Régis-Gianas</a>, <a href="http://www.pps.univ-paris-diderot.fr/~lgonzale/">Lourdes del Carmen González Huesca</a>, <a href="http://www.mpi-sws.org/~beta/">Beta Ziliani</a> and <a href="http://guillaume.claret.me/">Guillaume Claret</a>.</p>
 
+<% unless preview %>
 <h3>Proof by reflection and example</h3>
 <p>We will take the example of equivalence decision between two terms given a list of known equivalences. Let us take a type \(T\) with \(\sim\) an equivalence relation and a list of hypothesis:</p>
 <p>\[
@@ -27,8 +28,24 @@
   let j2 = find a j in
   i2 = j2</pre>
 <p>We start with an empty array <code>a</code> representing the fact that equivalence classes are <em>a priori</em> singleton sets. We merge them calling the <code>union</code> procedure on each hypothesis. Then if the representatives <code>(i2, j2)</code> of <code>(i, j)</code> are equal the property \(e_i \sim e_j\) holds.</p>
-<p>A nice way to show the soundness of <code>decide</code> is to add an invariant to the array <code>a</code> stating that if <code>i</code> and <code>j</code> are linked then \(e_i \sim e_j\). This can be done elegantly in Coq, which natively supports mixed proofs and programs (see the <a href="http://coq.inria.fr/refman/Reference-Manual028.html">Program</a> construct). An harder thing is to encode the union-find in a purely functional way since it critically relies on a mutable array, and to show the termination of the <code>union</code> and <code>find</code> procedures.</p>
-<p>We decided not to do so, and instead introduce a monad \(M\) representing side-effects, non-termination and exceptions. This is very much in the style of the IO monad of <a href="http://www.haskell.org/">Haskell</a>. It provides several primitives:</p>
+<p>A nice way to show the soundness of <code>decide</code> is to add an invariant to the array <code>a</code> stating that if <code>i</code> and <code>j</code> are linked then \(e_i \sim e_j\). This can be done elegantly in Coq, which natively supports mixed proofs and programs (see the <a href="http://coq.inria.fr/refman/Reference-Manual028.html">Program</a> construct). At the end we just return a proof of \(e_i \sim e_j\) if <code>i2</code> equals <code>j2</code>. An harder thing is to encode the union-find in a purely functional way since it critically relies on a mutable array, and show the termination of the <code>union</code> and <code>find</code> procedures.</p>
+<p>We decided not to do so, and instead introduce a monad \(M\) representing side-effects, non-termination and exceptions. We obtain a solution close to the pseudo-code:</p>
+<pre class="prettyprint linenums">Definition decide (known_eqs : equalities) (i j : T) : M (i ~ j).
+  refine (
+    let! a := tmp_ref s 0 nil in
+    do! List.iter (unify a) known_eqs in
+    let! Pi2 := find a i in
+    let (i2, Hii2) := Pi2 in
+    let! Pj2 := find a j in
+    let (j2, Hjj2) := Pj2 in
+    if eq_dec i2 j2 then
+      ret _
+    else
+      error "decide: the terms are not equal").
+  ... (* some proof term *)
+Defined.</pre>
+<p>On line 3, <code>let!</code> is a notation for the bind operator. Line 9, we test the equality of <code>i2</code> and <code>j2</code>. Line 10, <code>ret _</code> means we are returning a proof, namely the proof that \(e_i \sim e_j\). This proof is delayed until line 13, where it is made in proof mode. It uses the properties <code>Hii2</code> and <code>Hjj2</code> given by the invariant on <code>a</code>, stating that \(e_i \sim e_{i_2}\) and \(e_j \sim e_{j_2}\).</p>
+<p>This is very much in the style of the IO monad of <a href="http://www.haskell.org/">Haskell</a>. Ours provides the following primitives:</p>
 <dl>
   <dt>Memory</dt>
   <dd>ref : \(\forall i, T_i \rightarrow M\ (\mathsf{Ref.t}\ T_i)\) (memory allocation)</dd>
@@ -43,8 +60,23 @@
   <dt>Printing</dt>
   <dd>print : \(T \rightarrow M\ ()\)</dd>
 </dl>
-<p>Obviously, this monad cannot be run natively in Coq. There is no function of type \(M\ \alpha \rightarrow \alpha\) or \(M\ \alpha \rightarrow \mathsf{option}\ \alpha\). This is due to the general fixpoint operators. Plus we would like to run it as efficiently as a native OCaml program.</p>
+<p>Obviously, this monad cannot be run natively in Coq. There is no run function of type \(M\ \alpha \rightarrow \alpha\) or \(M\ \alpha \rightarrow \mathsf{option}\ \alpha\). This is due to the general fixpoint operators which cannot be encoded in Coq since its typing rules enforce termination. Plus we want to run it as efficiently as possible.</p>
 
-<h3>Theory of simulable monads</h3>
-<p></p>
-<!-- TODO Talk about select -->
+<h3>An hybrid back-end</h3>
+<p>To run our monad we combine the Coq and OCaml back-ends:</p>
+<img src="../data/claret/coqbottom/compilation.svg" class="img-polaroid" width=100% />
+<p class="text-center">Compilation chain.</p>
+<p>We first use the <a href="http://coq.inria.fr/refman/Reference-Manual027.html">extraction</a> mechanism of Coq to get an equivalent program of our decision procedure in OCaml. All the monadic operators are replaced by native OCaml operators, since this language supports all the effects of our monad. We run it on a specific problem instance \(x\). It may not return a result in case of uncaught exception or infinite loop. If the execution is successful, we extract what we call a <em>prophecy</em>. This value is a guide which helps Coq to evaluate the monad efficiently with an extended run function of type:</p>
+<p>\[
+  \mathsf{run} : \mathsf{prophecy} \rightarrow M\ \alpha \rightarrow \mathsf{option}\ \alpha
+\]</p>
+<p>For the non-termination it contains the numbers of steps needed to evaluate a monadic value. It can also contain some pre-computed values in OCaml to save computational time in Coq. We provide a general mechanism to pass results from OCaml to Coq in the prophecy with the <em>input memory</em>. When you allocate a reference, you can mark it as an "input". If you do so, its final value after the OCaml run will be given as its initial value in the Coq run. Any value can be passed thought the prophecy as long as you can serialize it. It does not work for functions or proofs, but does for all common data-structures such as integers or lists.</p>
+<p>Notice that if you do not save results in the prophecy, computations are made twice: once in OCaml, then post-checked in Coq with the run function. This is the main limitation of our system, but it could be solved with a proven correct extraction mechanism.</p>
+
+<h3>An hybrid programming model</h3>
+<p>We pretend that our programming model combines nicely safety and efficiency. Safety because of the strong type system of Coq and the ability to prove invariants on our programs. Efficiency because costly computations are delayed to OCaml. It supersedes what can be done with proof by reflection in pure Coq or with an OCaml plugin generating proof certificates. In a way, <a href="http://coqbottom.gforge.inria.fr/">Coqbottom</a> unifies these two techniques, and allow to combine both approach depending on the problem.</p>
+<img src="../data/claret/coqbottom/comparison.svg" class="img-polaroid" width=100% />
+<p class="text-center">Trade-off efficiency vs correctness.</p>
+
+<p>As future work we plan to add more monadic operators, especially for concurrency. It would also be great to have a trusted extraction mechanism for Coq.</p>
+<% end %>
