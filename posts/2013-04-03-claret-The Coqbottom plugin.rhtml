@@ -27,7 +27,7 @@
   let i2 = find a i in
   let j2 = find a j in
   i2 = j2</pre>
-<p>We start with an empty array <code>a</code> representing the fact that equivalence classes are <em>a priori</em> singleton sets. We merge them calling the <code>union</code> procedure on each hypothesis. Then if the representatives <code>(i2, j2)</code> of <code>(i, j)</code> are equal the property \(e_i \sim e_j\) holds.</p>
+<p>We start with an empty array <code>a</code> representing the fact that equivalence classes are <em>a priori</em> singleton sets. We merge them calling the <code>union</code> procedure on each hypothesis. If the representatives <code>(i2, j2)</code> of <code>(i, j)</code> are equal then the property \(e_i \sim e_j\) holds.</p>
 <p>A nice way to show the soundness of <code>decide</code> is to add an invariant to the array <code>a</code> stating that if <code>i</code> and <code>j</code> are linked then \(e_i \sim e_j\). This can be done elegantly in Coq, which natively supports mixed proofs and programs (see the <a href="http://coq.inria.fr/refman/Reference-Manual028.html">Program</a> construct). At the end we just return a proof of \(e_i \sim e_j\) if <code>i2</code> equals <code>j2</code>. An harder thing is to encode the union-find in a purely functional way since it critically relies on a mutable array, and show the termination of the <code>union</code> and <code>find</code> procedures.</p>
 <p>We decided not to do so, and instead introduce a monad \(M\) representing side-effects, non-termination and exceptions. We obtain a solution close to the pseudo-code:</p>
 <pre class="prettyprint linenums">Definition decide (known_eqs : equalities) (i j : T) : M (i ~ j).
