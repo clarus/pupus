@@ -26,7 +26,7 @@
     <%= preview ? post.content_preview : post.content %>
     <!-- End of the post content -->
     <% if preview %>
-      <a href="<%= dir + post.url %>"><i class="icon-arrow-right"></i> read more</a>
+      <strong><a href="<%= dir + post.url %>"><i class="icon-arrow-right"></i> read more...</a></strong>
     <% end %>
     
     <% if comments %>

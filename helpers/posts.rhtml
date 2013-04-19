@@ -1,15 +1,5 @@
 <%= header(config, "", :blog) %>
 
-<div class="row-fluid">
-  <div class="span9">
-    <p>
-      This is the blog of the PPS team of Université Paris Diderot.
-    </p>
-  </div>
-  <div class="span3">
-  </div>
-</div>
-
 <% for post in blog.posts[config["posts_per_page"] * page .. config["posts_per_page"] * (page + 1) - 1] do %>
   <%= post_content(config, "", post, true, false) %>
 <% end %>

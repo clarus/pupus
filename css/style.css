@@ -16,18 +16,16 @@ html {
 }
 
 .content {
+  margin-top: 20px;
   margin-bottom: 60px;
 }
 
-.nav-list ul {
-  margin-top: 10px;
-  list-style: none;
-}
+/*header {
+  padding-bottom: 10px;
+}*/
 
-.nav-list li {
-  line-height: 25px;
-  padding-left: 18px;
-  background: url("../img/right-arrow.png") left 5px no-repeat;
+h1 a {
+  color: rgb(51, 51, 51);
 }
 
 .post {
