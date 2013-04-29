@@ -10,7 +10,7 @@
       <item>
         <title><%= h post.name %></title>
         <pubDate><%= post.date.strftime("%a, %d %b %Y %H:%M:%S %z") %></pubDate>
-        <description><%= h post.content %></description>
+        <description><%= h post.content("") %></description>
         <link><%= "#{config["url"]}#{post.url}" %></link>
         <guid><%= "#{config["url"]}#{post.url}" %></guid>
       </item>

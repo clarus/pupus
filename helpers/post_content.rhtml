@@ -23,7 +23,7 @@
       <span class="hidden-phone"><i class="icon-comments"></i> <a href="<%= dir + post.url + "#disqus_thread" %>">Comments</a></span>
     </div>
     <!-- Beginning of the post content -->
-    <%= preview ? post.content_preview : post.content %>
+    <%= preview ? post.content_preview(dir) : post.content(dir) %>
     <!-- End of the post content -->
     <% if preview %>
       <i class="icon-arrow-right"></i> <strong><a href="<%= dir + post.url %>">read more...</a></strong>

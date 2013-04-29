@@ -37,10 +37,10 @@ class Blog
 end
 
 class Post
-  attr_reader :name, :author, :date, :content, :content_preview, :url
+  attr_reader :name, :author, :date, :url
   
   def initialize(name)
-    file_name = "posts/#{name}.rhtml"
+    @file_name = "posts/#{name}.rhtml"
     if /\A(\d+)-(\d+)-(\d+)-(\w+)-(.*)\z/ === name
       @date = Time.local($1, $2, $3)
       @author = $4
@@ -48,11 +48,17 @@ class Post
     else
       raise "Invalid post name \"#{file_name}\". Should be YEAR-MONTH-DAY-AUTHOR-TITLE.rhtml"
     end
-    preview = false
-    @content = Template.new(file_name).result(binding)
-    preview = true
-    @content_preview = Template.new(file_name).result(binding)
     @url = "posts/#{@name.gsub(/\W+/, "-").downcase}.html"
+  end
+  
+  def content(dir)
+    preview = false
+    Template.new(@file_name).result(binding)
+  end
+  
+  def content_preview(dir)
+    preview = true
+    Template.new(@file_name).result(binding)
   end
 end
 
