@@ -9,10 +9,14 @@
     <link rel="icon" type="image/png" href="<%= dir + "data/logo.png" %>" />
     <link rel="alternate" type="application/rss+xml" href="<%= dir %>rss.xml" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
-    <link href="<%= dir %>css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="<%= dir %>css/style.css" rel="stylesheet" media="screen">
-    <link href="<%= dir %>css/prettify.css" rel="stylesheet" media="screen">
+    <link href="<%= dir %>css/bootstrap.min.css" rel="stylesheet">
+    <link href="<%= dir %>css/style.css" rel="stylesheet">
+    <link href="<%= dir %>css/prettify.css" rel="stylesheet">
+    <link href="<%= dir %>fonts/fontawesome.css" rel="stylesheet">
     <link href="<%= dir %>css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <!--[if IE 7]>
+      <link href="<%= dir %>fonts/fontawesome-ie7.css" rel="stylesheet">
+    <![endif]-->
     <!--[if lt IE 9]>
       <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -28,7 +32,7 @@
             <a href="<%= dir + "." %>" class="visible-phone pull-left"><img src="<%= dir + "data/logo.png" %>" alt="PuPuS" width="110"></a>
             <h1><a href="<%= dir + "." %>"><%= h config["title"] %></a></h1>
             <p>This is the blog of the <a href="http://www.pps.univ-paris-diderot.fr/">PPS team</a> of <a href="http://www.univ-paris-diderot.fr/">Université Paris Diderot</a>. We talk about programming, proof theory, models, concurrency, rewriting, realisability and game theory.</p>
-            <p class="hidden-phone"><a href="<%= dir + "contribute.html" %>">Contribute...</a></p>
+            <p class="hidden-phone"><i class="icon-gift"></i> <a href="<%= dir + "contribute.html" %>">Contribute...</a></p>
           </div>
           <div class="span1"></div>
           <div class="span2">

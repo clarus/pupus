@@ -20,13 +20,13 @@
         <%= h author["name"] %>
       <% end %>
       </span>
-      <span class="hidden-phone"><i class="icon-comment"></i> <a href="<%= dir + post.url + "#disqus_thread" %>">Comments</a></span>
+      <span class="hidden-phone"><i class="icon-comments"></i> <a href="<%= dir + post.url + "#disqus_thread" %>">Comments</a></span>
     </div>
     <!-- Beginning of the post content -->
     <%= preview ? post.content_preview : post.content %>
     <!-- End of the post content -->
     <% if preview %>
-      <strong><a href="<%= dir + post.url %>"><i class="icon-arrow-right"></i> read more...</a></strong>
+      <i class="icon-arrow-right"></i> <strong><a href="<%= dir + post.url %>">read more...</a></strong>
     <% end %>
     
     <% if comments %>
@@ -58,10 +58,10 @@
       <% end %>
       <% if author["email"] %>
         <% name, domain = author["email"].split("@") %>
-        <dt>Email</dt><dd><i class="icon-envelope"></i> (λ x. x @ <%= domain %>) <%= name %></dd>
+        <dt>Email</dt><dd><i class="icon-envelope-alt"></i> (λ x. x @ <%= domain %>) <%= name %></dd>
       <% end %>
       <% if author["twitter"] %>
-        <dt>Twitter</dt><dd><a href="https://twitter.com/<%= author["twitter"] %>">@<%= author["twitter"] %></a></dd>
+        <dt>Twitter</dt><dd><i class="icon-twitter"></i> <a href="https://twitter.com/<%= author["twitter"] %>">@<%= author["twitter"] %></a></dd>
       <% end %>
     </dl>
   </div>

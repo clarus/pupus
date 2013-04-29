@@ -111,7 +111,7 @@ class Controller
   
   def make
     FileUtils.mkdir_p("#{@config["destination"]}/posts")
-    FileUtils.cp_r(["css", "data", "img", "js"], "#{@config["destination"]}/")
+    FileUtils.cp_r(["css", "data", "fonts", "js"], "#{@config["destination"]}/")
     
     pages = ["site/*.rhtml", "site/rss.rxml"]
     pages = (pages.map {|name| Dir.glob(name)}).flatten
