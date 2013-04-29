@@ -1,6 +1,6 @@
 title: PuPuS
-url: http://www.pps.univ-paris-diderot.fr/
-destination: _site
+url: http://www.pps.univ-paris-diderot.fr/blog/
+destination: blog
 disqus: pps-blog
 posts_per_page: 3
 authors:

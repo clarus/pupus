@@ -52,7 +52,7 @@ class Post
     @content = Template.new(file_name).result(binding)
     preview = true
     @content_preview = Template.new(file_name).result(binding)
-    @url = "blog/#{@name.gsub(/\W+/, "-").downcase}.html"
+    @url = "posts/#{@name.gsub(/\W+/, "-").downcase}.html"
   end
 end
 
@@ -110,7 +110,7 @@ class Controller
   end
   
   def make
-    FileUtils.mkdir_p("#{@config["destination"]}/blog")
+    FileUtils.mkdir_p("#{@config["destination"]}/posts")
     FileUtils.cp_r(["css", "data", "img", "js"], "#{@config["destination"]}/")
     
     pages = ["site/*.rhtml", "site/rss.rxml"]
