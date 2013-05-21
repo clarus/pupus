@@ -6,14 +6,14 @@
     <p>If you are a member of the <a href="http://www.pps.univ-paris-diderot.fr/">PPS team</a>, you can send an email to <strong>(λ x. x @ claret.me) guillaume</strong> to publish a new blog post. It should be written in HTML. The simpler to begin is to start editing an existing post. The content is in between <code>&lt;!-- Beginning of the post content --&gt;</code> and <code>&lt;!-- End of the post content --&gt;</code> in the HTML source.</p>
     
     <h3>Typography</h3>
-    <p>You can use any HTML tag. We use the CSS <a href="http://twitter.github.com/bootstrap/index.html">Bootstrap</a>. It provides many handful classes. You can look at the <a href="http://twitter.github.com/bootstrap/base-css.html">Bootstrap guide</a> for more information and examples. For subtitles our convention is to use <code>&lt;h3&gt;</code>.</p>
+    <p>You can use any HTML tag. We use the CSS Bootstrap. It provides many handful classes. You can look at the <a href="http://twitter.github.com/bootstrap/base-css.html">Bootstrap guide</a> for more information and examples. For subtitles our convention is to use <code>&lt;h3&gt;</code>.</p>
     <blockquote>
       <p>Il semble que la perfection soit atteinte, non quand il n'y a plus rien à ajouter mais quand il n'y a plus rien à retrancher.</p>
       <small>Saint-Exupéry - <cite title="Terre des hommes">Terre des hommes</cite></small>
     </blockquote>
     
     <h3>Include some code</h3>
-    <p>You may use <a href="https://code.google.com/p/google-code-prettify/">Google prettify</a> for syntax highlighting. For example:
+    <p>You may use syntax highlighting thanks to <a href="https://code.google.com/p/google-code-prettify/">Google prettify</a>. For example:
     <pre>&lt;pre class=&quot;prettyprint&quot;&gt;print &quot;hello&quot;&lt;/pre&gt;</pre>
     <p>will do:</p>
     <pre class="prettyprint">print "hello"</pre>
@@ -29,7 +29,7 @@ flow 1 [
 </pre>
     
     <h3>Include some LaTeX</h3>
-    <p>You can add mathematical expressions in between <code>\(</code> and <code>\)</code> for inline content, or <code>\[</code> and <code>\]</code> for the full mode. The <code>$</code> does not work since it is too frequent. The <a href="http://www.mathjax.org/">MathJax</a> plugin will automatically transform it to pure HTML:</p>
+    <p>You can add mathematical expressions in between <code>\(</code> and <code>\)</code> for inline content, or <code>\[</code> and <code>\]</code> for the full mode. The <code>$</code> does not work since it is too frequent. The <a href="http://www.mathjax.org/">MathJax</a> plugin will automatically render it properly:</p>
     <pre>&lt;p&gt;\[J_\alpha(x) = \sum\limits_{m=0}^\infty \frac{(-1)^m}{m! \, \Gamma(m + \alpha + 1)}{\left({\frac{x}{2}}\right)}^{2 m + \alpha}\]&lt;/p&gt;</pre>
     <p>gives:</p>
     <p>\[J_\alpha(x) = \sum\limits_{m=0}^\infty \frac{(-1)^m}{m! \, \Gamma(m + \alpha + 1)}{\left({\frac{x}{2}}\right)}^{2 m + \alpha}\]</p>
