@@ -3,12 +3,9 @@ PuPuS blog:
       ruby make.rb
     It will (re)generate the blog in "blog/".
   
-  Technologies:
-    HTML templates in Ruby + Bootstrap CSS.
-  
-  Modify to add a post:
+  Add a post:
     posts/
-      The blog posts. The convention is "YEAR-MONTH-DAY-AUTHOR-TITLE.html".
+      The blog posts. The convention is "YEAR-MONTH-DAY-AUTHOR-TITLE.rhtml".
       Modify "config.yaml" to add authors. Content is pure HTML. You can use:
       <% unless preview %>
         ...
@@ -18,7 +15,7 @@ PuPuS blog:
     data/
       The repository to put various data such as pictures.
   
-  Modify:
+  Modify the blkog system:
     css/
       Boostrap CSS + a customized "style.css".
     
@@ -40,3 +37,6 @@ PuPuS blog:
     
     make.rb
       The main file to run everything.
+  
+  Technologies:
+    HTML templates in Ruby + Bootstrap CSS.
