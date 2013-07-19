@@ -1,32 +1,35 @@
-Website:
-  Technologies:
-    HTML templates in Ruby + Bootstrap CSS
-  
+PuPuS blog:
   Run:
       ruby make.rb
-    It will (re)generate the website in "_site/".
+    It will (re)generate the blog in "blog/".
   
-  Modifiy:
-    css/:
+  Technologies:
+    HTML templates in Ruby + Bootstrap CSS.
+  
+  Modify to add a post:
+    posts/
+      The blog posts. The convention is "YEAR-MONTH-DAY-AUTHOR-TITLE.html".
+      Modify "config.yaml" to add authors. Content is pure HTML. You can use:
+      <% unless preview %>
+        ...
+      <% end %>
+      to mark the part which will not be displayed on the front page.
+    
+    data/
+      The repository to put various data such as pictures.
+  
+  Modify:
+    css/
       Boostrap CSS + a customized "style.css".
+    
+    font/
+      Font Awsome icon set.
     
     helpers/
       HTML snippets included in other pages.
     
-    img/
-      Icons and images.
-    
     js/
       Bootstrap JavaScript.
-    
-    posts/
-      The blog posts. The convention is "YEAR-MONTH-DAY-AUTHOR-TITLE.html".
-      Modify "config.yaml" to add authors. Content is pure HTML. You can use:
-      <div class="full-article">
-        ...
-      </div>
-      to mark the part which will not be displayed on the front page. Useful if
-      your article is too long.
     
     site/
       The web pages of the site in Ruby-HTML ".rhtml". They will be compiled to
