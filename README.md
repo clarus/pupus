@@ -1,6 +1,16 @@
-# PuPuS blog:
+# PuPuS blog
 
-    ruby make.rb
+Compile:
+
+    make
+
+Compile each time a post is updated:
+
+    make watch
+
+Preview the results on [localhost:8000](http://localhost:8000/):
+
+    make serve
   
 ## Add a post
 * `posts/` The blog posts. The convention is `YEAR-MONTH-DAY-AUTHOR-TITLE.rhtml`. Modify `config.yaml` to add authors. Content is pure HTML. You can use:
