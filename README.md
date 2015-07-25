@@ -3,8 +3,7 @@
     ruby make.rb
   
 ## Add a post
-### `posts/`
-The blog posts. The convention is `YEAR-MONTH-DAY-AUTHOR-TITLE.rhtml`. Modify `config.yaml` to add authors. Content is pure HTML. You can use:
+* `posts/` The blog posts. The convention is `YEAR-MONTH-DAY-AUTHOR-TITLE.rhtml`. Modify `config.yaml` to add authors. Content is pure HTML. You can use:
 
     <% unless preview %>
       ...
@@ -12,8 +11,7 @@ The blog posts. The convention is `YEAR-MONTH-DAY-AUTHOR-TITLE.rhtml`. Modify `c
 
 to mark the part which will not be displayed on the front page.
     
-### `data/`
-The repository to put various data such as pictures.
+* `data/` The repository to put various data such as pictures.
   
 ## Modify the blog system
 * `css/` [Bootstrap CSS](http://getbootstrap.com/) + a customized `style.css`;
